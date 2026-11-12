@@ -68,7 +68,7 @@ Google Business Profile (Google only opens that API to approved projects), DataF
 
 ## Safety notes
 
-- By default the server listens on `127.0.0.1` only. To deploy, set `HOST=0.0.0.0`, `APP_PASSWORD` (HTTP Basic login; the app refuses to start without it) and `PUBLIC_URL`, serve it over HTTPS, and keep `DATA_DIR` on a persistent disk (a `Dockerfile` is included; `/healthz` is the health check). API keys entered in the app are stored in plain text in that database.
+- By default the server listens on `127.0.0.1` only. To deploy, set `HOST=0.0.0.0`, `APP_PASSWORD` (a sign-in page; the app refuses to start without it) and `PUBLIC_URL`, serve it over HTTPS, and keep `DATA_DIR` on a persistent disk (a `Dockerfile` is included; `/healthz` is the health check). API keys entered in the app are stored in plain text in that database.
 - The page fetcher refuses addresses on private networks and treats page text as data.
 - Agents have no tool that can change a website or an account.
 

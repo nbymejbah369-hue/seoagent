@@ -442,12 +442,38 @@ app.use((req, res, next) => {
 });
 app.get('/healthz', (req, res) => res.type('text').send('ok'));
 if (APP_PASSWORD) {
-  const want = crypto.createHash('sha256').update(APP_PASSWORD).digest();
+  // Login page + signed cookie (works in every browser, unlike the Basic-auth dialog).
+  const KEY = crypto.createHash('sha256').update('nineteen-session:' + APP_PASSWORD).digest();
+  const sign = (exp) => exp + '.' + crypto.createHmac('sha256', KEY).update(String(exp)).digest('hex');
+  const valid = (tok) => {
+    const [exp, mac] = String(tok || '').split('.');
+    if (!exp || !mac || Number(exp) < Date.now()) return false;
+    const a = Buffer.from(sign(exp).split('.')[1]), b = Buffer.from(mac);
+    return a.length === b.length && crypto.timingSafeEqual(a, b);
+  };
+  const cookie = (req) => Object.fromEntries(String(req.headers.cookie || '').split(/;\s*/).map((c) => c.split(/=(.*)/s).slice(0, 2)))['nineteen_session'];
+  const same = (a, b) => crypto.timingSafeEqual(crypto.createHash('sha256').update(String(a)).digest(), crypto.createHash('sha256').update(String(b)).digest());
+  const tries = new Map(); // ip -> { n, reset }
+  const page = (msg = '') => `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Nineteen: sign in</title><style>body{font:16px system-ui,sans-serif;display:grid;place-items:center;min-height:100vh;margin:0;background:#f6f6f4}form{background:#fff;padding:28px;border:1px solid #ddd;border-radius:10px;width:min(320px,90vw)}h1{font-size:20px;margin:0 0 16px}input,button{width:100%;box-sizing:border-box;padding:10px;font-size:16px;margin-top:10px}button{background:#222;color:#fff;border:0;border-radius:6px;cursor:pointer}p{color:#b00;margin:10px 0 0;font-size:14px}</style><form method="post" action="/login"><h1>Nineteen SEO Desk</h1><input type="password" name="password" placeholder="Password" autofocus required><button>Sign in</button>${msg ? `<p>${msg}</p>` : ''}</form>`;
+  app.get('/login', (req, res) => res.type('html').send(page()));
+  app.post('/login', express.urlencoded({ extended: false, limit: '4kb' }), (req, res) => {
+    const ip = req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket.remoteAddress;
+    const t = tries.get(ip);
+    if (t && t.reset > Date.now() && t.n >= 8) return res.status(429).type('html').send(page('Too many attempts. Wait a few minutes.'));
+    if (same(req.body?.password ?? '', APP_PASSWORD)) {
+      tries.delete(ip);
+      const secure = (req.headers['x-forwarded-proto'] || req.protocol) === 'https' ? '; Secure' : '';
+      res.set('Set-Cookie', `nineteen_session=${sign(Date.now() + 14 * 864e5)}; HttpOnly; SameSite=Lax; Path=/; Max-Age=${14 * 86400}${secure}`);
+      return res.redirect('/');
+    }
+    tries.set(ip, { n: (t && t.reset > Date.now() ? t.n : 0) + 1, reset: Date.now() + 10 * 60000 });
+    res.status(401).type('html').send(page('Wrong password.'));
+  });
+  app.post('/logout', (req, res) => { res.set('Set-Cookie', 'nineteen_session=; Max-Age=0; Path=/'); res.redirect('/login'); });
   app.use((req, res, next) => {
-    const [scheme, token] = String(req.headers.authorization || '').split(' ');
-    const pass = scheme === 'Basic' && token ? Buffer.from(token, 'base64').toString().replace(/^[^:]*:/, '') : '';
-    if (crypto.timingSafeEqual(crypto.createHash('sha256').update(pass).digest(), want)) return next();
-    res.set('WWW-Authenticate', 'Basic realm="Nineteen"').status(401).send('Login required.');
+    if (valid(cookie(req))) return next();
+    if (req.path.startsWith('/api')) return res.status(401).json({ error: 'Not signed in.' });
+    res.redirect('/login');
   });
 }
 app.use(express.json({ limit: '2mb' }));
