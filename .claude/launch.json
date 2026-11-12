@@ -1,0 +1,4 @@
+{"version":"0.0.1","configurations":[
+ {"name":"nineteen","runtimeExecutable":"node","runtimeArgs":["--env-file-if-exists=.env","server.js"],"port":3019},
+ {"name":"nineteen-mock","runtimeExecutable":"node","runtimeArgs":["--env-file-if-exists=.env","server.js","--mock"],"port":3019}
+]}

@@ -1,0 +1,529 @@
+<title>Nineteen SEO Desk</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: app shell. Sticky sidebar of views, top bar with site + /seo command bar, one scrolling work area. Sidebar becomes a tab strip on phones. */
+:root{
+  --bg:#f4f5f8; --surface:#fcfcfb; --raise:#ffffff; --ink:#0b0d12; --ink2:#4c515c; --muted:#84888f;
+  --line:#e1e2e7; --axis:#c3c5cc; --accent:#2a78d6; --accent-ink:#ffffff; --wash:#e9f1fc; --hover:#eef0f4;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --neg:#e34948; --prev:#84888f;
+  --q1:#cde2fb; --q2:#9ec5f4; --q3:#6da7ec; --q4:#2a78d6; --q5:#184f95; --q-hi-ink:#ffffff; --q-lo-ink:#0b0d12;
+  --good:#0ca30c; --warn:#fab219; --serious:#ec835a; --crit:#d03b3b; --good-text:#006300; --crit-text:#b02a2a;
+  --shadow:0 1px 2px rgba(11,13,18,.06),0 8px 24px rgba(11,13,18,.06);
+  --display:"Space Grotesk",system-ui,sans-serif; --body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif; --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0d0d0e; --surface:#1a1a19; --raise:#222224; --ink:#f0f0ee; --ink2:#c2c4c9; --muted:#8a8d94;
+  --line:#2c2d30; --axis:#3b3d42; --accent:#3987e5; --accent-ink:#ffffff; --wash:#17283f; --hover:#242528;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --neg:#e66767; --prev:#8a8d94;
+  --q1:#143a66; --q2:#184f95; --q3:#256abf; --q4:#5598e7; --q5:#b7d3f6; --q-hi-ink:#0b0d12; --q-lo-ink:#f0f0ee;
+  --good-text:#0ca30c; --crit-text:#e66767; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35); color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#0d0d0e; --surface:#1a1a19; --raise:#222224; --ink:#f0f0ee; --ink2:#c2c4c9; --muted:#8a8d94;
+  --line:#2c2d30; --axis:#3b3d42; --accent:#3987e5; --accent-ink:#ffffff; --wash:#17283f; --hover:#242528;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --neg:#e66767; --prev:#8a8d94;
+  --q1:#143a66; --q2:#184f95; --q3:#256abf; --q4:#5598e7; --q5:#b7d3f6; --q-hi-ink:#0b0d12; --q-lo-ink:#f0f0ee;
+  --good-text:#0ca30c; --crit-text:#e66767; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35); color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:14px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance;letter-spacing:-.01em}
+h1{font-size:24px;line-height:1.2} h2{font-size:15px} h3{font-size:14px}
+p{margin:0}
+.mono{font-family:var(--mono);font-size:12.5px}
+.muted{color:var(--muted)} .ink2{color:var(--ink2)}
+.num{font-variant-numeric:tabular-nums}
+
+.shell{display:grid;grid-template-columns:208px minmax(0,1fr);gap:20px;max-width:1320px;margin:0 auto}
+.side{position:sticky;top:calc(16px + env(safe-area-inset-top,0px));align-self:start;display:flex;flex-direction:column;gap:18px}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 8px}
+.brand b{font-family:var(--display);font-size:17px;letter-spacing:-.02em}
+.mark{width:28px;height:28px;border-radius:8px;background:var(--ink);color:var(--bg);display:grid;place-items:center;font-family:var(--mono);font-size:12px;font-weight:500}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav a{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;color:var(--ink2);text-decoration:none;font-weight:500;transition:background .15s,color .15s}
+.nav a:hover{background:var(--hover);color:var(--ink)}
+.nav a[aria-current="page"]{background:var(--wash);color:var(--accent)}
+.nav .ct{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.sitebox{border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--surface);display:flex;flex-direction:column;gap:2px}
+.sitebox small{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+
+.main{min-width:0;display:flex;flex-direction:column;gap:16px}
+.top{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.cmd{flex:1 1 280px;position:relative;min-width:0}
+.cmd label{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:0 6px 0 12px;height:42px;transition:border-color .15s,box-shadow .15s}
+.cmd label:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--wash)}
+.cmd .slash{font-family:var(--mono);color:var(--s2);font-weight:500}
+.cmd input{flex:1;min-width:0;border:0;background:none;outline:0;font-family:var(--mono);font-size:13px}
+.cmd kbd{font-family:var(--mono);font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+.cmdlist{position:absolute;z-index:20;top:46px;left:0;right:0;background:var(--raise);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);padding:4px;max-height:300px;overflow:auto;transform-origin:top center;animation:pop .16s var(--ease)}
+.cmdlist button{display:flex;gap:10px;align-items:baseline;width:100%;text-align:left;border:0;background:none;padding:7px 9px;border-radius:7px}
+.cmdlist button.on,.cmdlist button:hover{background:var(--wash)}
+.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:3px 10px;font-size:12px;color:var(--ink2);white-space:nowrap}
+.pill.sample{border-style:dashed}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex:none}
+.dot.good{background:var(--good)} .dot.warn{background:var(--warn)} .dot.crit{background:var(--crit)} .dot.run{background:var(--accent);animation:pulse 1.2s ease-in-out infinite}
+
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 12px;font-weight:500;transition:background .15s,transform .1s,border-color .15s}
+.btn:hover{background:var(--hover)} .btn:active{transform:scale(.97)}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)} .btn.pri:hover{filter:brightness(1.08);background:var(--accent)}
+.btn.sm{padding:3px 9px;font-size:12px}
+.btn[aria-pressed="true"]{background:var(--wash);border-color:var(--accent);color:var(--accent)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+
+.view{display:flex;flex-direction:column;gap:16px;animation:rise .35s var(--ease)}
+.head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.head p{color:var(--ink2);max-width:65ch}
+.grid{display:grid;gap:12px}
+.g5{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.g2{grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr))}
+.g4{grid-template-columns:repeat(auto-fill,minmax(min(100%,232px),1fr))}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;min-width:0;display:flex;flex-direction:column;gap:10px}
+.stag>*{animation:rise .4s var(--ease) both;animation-delay:calc(var(--i,0)*30ms)}
+.chead{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.chead p{color:var(--muted);font-size:12px}
+.tile .v{font-family:var(--display);font-size:26px;font-weight:600;line-height:1.1;letter-spacing:-.02em}
+.tile .row{display:flex;justify-content:space-between;align-items:flex-end;gap:8px}
+.delta{font-size:12px;font-weight:500} .delta.up{color:var(--good-text)} .delta.down{color:var(--crit-text)}
+.lbl{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:500}
+
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--ink2)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.legend i.ln{height:2px;width:14px;border-radius:0;vertical-align:3px}
+.chart{position:relative;min-width:0}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart text{font-family:var(--body);font-size:11px;fill:var(--muted)}
+.chart text.val{fill:var(--ink2);font-variant-numeric:tabular-nums}
+.chart text.cat{fill:var(--ink2)}
+.first .draw{stroke-dasharray:1;stroke-dashoffset:1;animation:draw .9s var(--ease) .1s forwards}
+.first .fade{animation:fadein .6s ease .5s both}
+.first .gx{transform-box:fill-box;transform-origin:left center;animation:gx .6s var(--ease) both;animation-delay:calc(var(--i,0)*45ms)}
+.first .gxr{transform-box:fill-box;transform-origin:right center;animation:gx .6s var(--ease) both;animation-delay:calc(var(--i,0)*45ms)}
+.first .gy{transform-box:fill-box;transform-origin:center bottom;animation:gy .6s var(--ease) both;animation-delay:calc(var(--i,0)*60ms)}
+.first .popin{transform-box:fill-box;transform-origin:center;animation:popdot .4s var(--ease) both;animation-delay:calc(var(--i,0)*35ms)}
+#tip{position:fixed;z-index:50;pointer-events:none;background:var(--raise);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow);padding:6px 9px;font-size:12px;max-width:240px;transition:opacity .12s}
+#tip b{font-weight:600}
+.tblwrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:500;padding:6px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.r,th.r{text-align:right;font-variant-numeric:tabular-nums}
+
+.heat{display:grid;gap:3px;font-size:12px;min-width:460px}
+.heat .q{color:var(--ink2);padding-right:8px;align-self:center}
+.heat .h{color:var(--muted);font-size:11px;text-align:center;padding-bottom:2px}
+.cell{border-radius:5px;height:34px;display:grid;place-items:center;font-variant-numeric:tabular-nums;font-weight:500;animation:fadein .5s ease both;animation-delay:calc(var(--i,0)*25ms)}
+
+.agent{cursor:pointer;text-align:left;transition:transform .18s var(--ease),border-color .18s,box-shadow .18s}
+.agent:hover{transform:translateY(-2px);border-color:var(--accent);box-shadow:var(--shadow)}
+.agent .n{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.agent .job{color:var(--ink2);font-size:13px;min-height:39px}
+.agent .foot{display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap}
+.src{font-family:var(--mono);font-size:10.5px;border:1px solid var(--line);border-radius:5px;padding:0 5px;color:var(--ink2)}
+.tag{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:500;border-radius:6px;padding:1px 7px;border:1px solid var(--line);color:var(--ink2);white-space:nowrap}
+
+.field{display:flex;flex-direction:column;gap:4px}
+.field input{border:1px solid var(--line);background:var(--raise);border-radius:8px;padding:7px 10px;min-width:0}
+.field input:focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 3px var(--wash)}
+.stream{font-family:var(--mono);font-size:12.5px;display:flex;flex-direction:column;gap:6px;min-height:120px}
+.stream .ln{animation:rise .3s var(--ease) both}
+.stream .ln.h{font-family:var(--display);font-size:14px;font-weight:600;margin-top:8px}
+.stream .ln.caret::after{content:"";display:inline-block;width:7px;height:14px;background:var(--accent);margin-left:4px;vertical-align:-2px;animation:blink .9s steps(1) infinite}
+.bar{height:4px;border-radius:2px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:2px;transition:width .5s var(--ease)}
+.bar.live i{background:linear-gradient(90deg,var(--accent),var(--q2),var(--accent));background-size:200% 100%;animation:shimmer 1.2s linear infinite}
+
+.pipe{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:22px 0}
+.stage{position:relative;padding-right:22px}
+.stage .box{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:6px;height:100%;transition:border-color .3s,box-shadow .3s}
+.stage.active .box{border-color:var(--accent);box-shadow:0 0 0 3px var(--wash)}
+.stage::after{content:"";position:absolute;right:2px;top:26px;width:18px;height:2px;background:repeating-linear-gradient(90deg,var(--axis) 0 4px,transparent 4px 8px)}
+.stage:last-child::after{display:none}
+.stage.flow::after{background:repeating-linear-gradient(90deg,var(--accent) 0 4px,transparent 4px 8px);background-size:8px 2px;animation:flow .4s linear infinite}
+
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:12px;align-items:start}
+.col{background:var(--hover);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.item{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:6px;animation:rise .3s var(--ease)}
+.out{animation:out .25s ease forwards}
+[hidden]{display:none!important}
+.meter{display:flex;flex-direction:column;gap:4px}
+.meter .bar{height:8px;border-radius:4px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:9px;font-weight:500;z-index:60;animation:toast 2.2s var(--ease) forwards}
+
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+@keyframes out{to{opacity:0;transform:translateX(16px) scale(.98)}}
+@keyframes pop{from{opacity:0;transform:scale(.97) translateY(-4px)}to{opacity:1;transform:none}}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes gx{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes gy{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes popdot{from{transform:scale(0)}to{transform:scale(1)}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 50%,transparent)}50%{box-shadow:0 0 0 5px transparent}}
+@keyframes blink{50%{opacity:0}}
+@keyframes shimmer{to{background-position:-200% 0}}
+@keyframes flow{to{background-position:8px 0}}
+@keyframes toast{0%{opacity:0;transform:translate(-50%,10px)}10%,85%{opacity:1;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,6px)}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}.first .draw{stroke-dashoffset:0}}
+
+@media (max-width:820px){
+  .shell{grid-template-columns:minmax(0,1fr);gap:12px}
+  .side{position:static;gap:10px}
+  .sitebox{display:none}
+  .nav{flex-direction:row;overflow-x:auto;gap:4px;padding-bottom:4px}
+  .nav a{flex:none}
+  .stage::after{display:none} .stage{padding-right:8px}
+  h1{font-size:21px}
+}
+</style>
+
+<div class="shell">
+  <aside class="side">
+    <div class="brand"><span class="mark">19</span><b>Nineteen</b></div>
+    <nav class="nav" id="nav" aria-label="Views"></nav>
+    <div class="sitebox"><small>Site</small><span class="mono">nbyit.com</span><span class="muted" style="font-size:12px">3D modeling studio · leads</span></div>
+  </aside>
+  <main class="main">
+    <div class="top">
+      <div class="cmd">
+        <label for="cmd"><span class="slash">/seo</span><input id="cmd" autocomplete="off" spellcheck="false" placeholder="type an agent, e.g. strategy" aria-label="Run an agent" aria-controls="cmdlist"><kbd>/</kbd></label>
+        <div class="cmdlist" id="cmdlist" hidden></div>
+      </div>
+      <span class="pill"><span class="dot good"></span>19 agents loaded</span>
+      <span class="pill sample" title="All figures in this design are examples, not real data for this site">Sample data</span>
+    </div>
+    <div id="view"></div>
+  </main>
+</div>
+<div id="tip" hidden></div>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=n=>Math.round(n).toLocaleString('en-US');
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const pad=n=>String(n).padStart(2,'0');
+
+/* ---------- data (all sample) ---------- */
+const SRC={gsc:'Search Console',ga4:'Analytics',dfs:'DataForSEO',gbp:'Business Profile'};
+const GROUPS={plan:'Plan',content:'Content',audit:'Audit',report:'Report'};
+const AG=[
+ [1,'SEO Strategy','Strategist','plan','Builds the plan before the work starts',['Site URL','Business goal','Audience','Competitors','Team hours per month'],['gsc','dfs']],
+ [2,'Keyword Research','Keyword Researcher','content','Finds relevant queries and search intent',['Topic','Seed terms','Country and language'],['dfs']],
+ [3,'SERP Analysis','SERP Analyst','content','Reviews the pages already ranking',['Query','Country and language','Your page URL'],['dfs']],
+ [4,'Content Briefs','Brief Writer','content','Turns search research into article outlines',['Primary query','SERP analysis','Audience','Brand voice'],['dfs']],
+ [5,'SEO Writing','SEO Writer','content','Drafts content around the search intent',['Brief','Source facts','Brand voice'],[]],
+ [6,'On-Page SEO','On-Page Reviewer','content','Reviews titles, headings and page structure',['Page URL','Target query','Intent'],[]],
+ [7,'Internal Linking','Internal Linker','content','Finds relevant pages to connect',['Page list','Priority pages'],['dfs']],
+ [8,'Technical SEO','Technical Auditor','audit','Reviews crawl and site health issues',['Site URL','Platform','Crawl data'],['dfs']],
+ [9,'Indexing','Indexing Analyst','audit','Checks pages that aren’t appearing in search',['Page indexing report','Sitemap URL'],['gsc']],
+ [10,'Structured Data','Schema Reviewer','audit','Reviews schema opportunities',['Page URL','Page type','Existing markup'],[]],
+ [11,'Competitor Research','Competitor Analyst','audit','Finds content gaps worth investigating',['Competitors','Topic area'],['dfs']],
+ [12,'Backlink Analysis','Backlink Analyst','audit','Reviews link profiles and opportunities',['Site URL','Competitor domains'],['dfs']],
+ [13,'Content Refresh','Content Refresher','audit','Identifies existing pages worth updating',['Page performance','Publish dates'],['gsc']],
+ [14,'Local SEO','Local SEO Analyst','audit','Reviews local search opportunities',['Business profile','Service areas','Target searches'],['gbp']],
+ [15,'AI Search Visibility','AI Search Analyst','audit','Examines how brands appear in AI answers',['Brand','Buyer questions','Competitors'],['dfs']],
+ [16,'Search Console Analysis','Search Console Analyst','report','Finds changes in queries and performance',['Period','Comparison period'],['gsc']],
+ [17,'Site Architecture','Site Architect','audit','Reviews how pages are organised',['URL list','Navigation','Key pages'],['dfs']],
+ [18,'SEO Reporting','SEO Reporter','report','Turns performance data into clear updates',['Reader','Period','Goals'],['gsc','ga4']],
+ [19,'SEO Planning','SEO Planner','plan','Prioritises the next actions',['Goal','Agent findings','Capacity'],[]],
+].map(a=>({id:a[0],name:a[1],role:a[2],group:a[3],job:a[4],inputs:a[5],src:a[6],status:'idle',last:null}));
+const agent=id=>AG.find(a=>a.id===id);
+[[1,'review','2 h ago'],[8,'review','Yesterday'],[17,'review','Yesterday'],[16,'idle','3 d ago'],[6,'review','2 h ago'],[14,'input',null],[2,'idle','2 h ago'],[3,'idle','1 h ago']].forEach(([id,s,l])=>{agent(id).status=s;agent(id).last=l});
+const PREFILL={'Site URL':'https://nbyit.com/','Business goal':'More qualified quote requests in 6 months','Audience':'Furniture brands in the US, Canada and Europe','Competitors':'cgifurniture.com, suntecindia.com, outsource2india.com','Country and language':'United States · English','Topic':'3D furniture modeling','Seed terms':'3d furniture modeling, furniture rendering services','Query':'3d furniture modeling services','Your page URL':'https://nbyit.com/industries/3d-furniture/','Page URL':'https://nbyit.com/3d-modeling-services/','Target query':'3d modeling services','Platform':'WordPress','Brand':'NBY IT Solution','Period':'Last 28 days','Comparison period':'Previous 28 days','Reader':'Studio owner','Goal':'More qualified quote requests in 6 months'};
+
+const F=[
+ [1,8,'Header “Contact Now” button links to #','Every page; the main call to action goes nowhere.','verified',5,1,'first'],
+ [2,8,'Contact form fields missing from the fetched page','May load by script. Check in a browser before changing anything.','check',5,2,'first'],
+ [3,17,'Two pages target “3D modeling services”','/3d-modeling-services/ and /3d-modeling-services-company/ split relevance.','verified',4,2,'first'],
+ [4,17,'Two clipping path URLs sit in the menu','/clipping-path-service/ and /clipping-path-services/.','verified',3,1,'first'],
+ [5,6,'Services FAQ shows a leftover editor note','“(new, if accurate)” appears in published copy.','verified',2,1,'first'],
+ [6,1,'Make furniture the lead vertical','Strongest specific claim on the site (50+ furniture brands).','assumption',5,3,'then'],
+ [7,4,'No case studies behind the portfolio','Thumbnails open image files; no client, problem or result.','verified',5,4,'then'],
+ [8,1,'Publish a “how we quote” page','Every page says “quoted individually”.','assumption',4,3,'then'],
+ [9,13,'Blog targets 3D learners, not buyers','Mostly Blender how-tos and software lists.','verified',3,4,'then'],
+ [10,7,'Furniture pages don’t link to each other','Industry page and service page have no cross-links.','verified',3,1,'then'],
+ [11,12,'Ask recent clients for Clutch reviews','Profile exists; review count not checked.','assumption',3,2,'then'],
+ [12,15,'Brand not named for furniture rendering questions','Seen in 2 of 8 collected answers.','check',4,4,'later'],
+ [13,11,'Rivals publish price guides; this site doesn’t','Seen on two competitor sites.','assumption',4,3,'later'],
+ [14,10,'Service pages carry no Service schema','Confirm in the Rich Results Test.','check',2,2,'later'],
+ [15,9,'Tag archives are submitted in the sitemap','Likely source of “Crawled, not indexed”.','check',2,2,'later'],
+ [16,16,'Six queries have high impressions and low CTR','Titles don’t match the query wording.','check',3,2,'later'],
+].map(f=>({id:f[0],agent:f[1],title:f[2],detail:f[3],ev:f[4],impact:f[5],effort:f[6],bucket:f[7],status:'open'}));
+const EV={verified:['Verified','good'],assumption:['Assumption','warn'],check:['Needs check','crit']};
+const BK={first:['Fix first','--s1'],then:['Then','--s2'],later:['Later','--s3']};
+const CONN=[
+ {k:'gsc',name:'Google Search Console',on:true,note:'nbyit.com · read-only',used:0,cap:0},
+ {k:'ga4',name:'Google Analytics 4',on:true,note:'Property 3D-Web · read-only',used:0,cap:0},
+ {k:'dfs',name:'DataForSEO',on:false,note:'Keywords, SERPs, backlinks, crawl, AI answers',used:3120,cap:10000},
+ {k:'gbp',name:'Google Business Profile',on:false,note:'Categories, reviews, hours',used:0,cap:0},
+];
+const PIPE=[1,2,3,4,5,6,7]; let pipeAt=3, pipeBusy=false;
+let seed=11; const rnd=()=>(seed=(seed*9301+49297)%233280)/233280;
+const series=(n,base,slope,noise)=>Array.from({length:n},(_,i)=>Math.max(0,Math.round(base+slope*i+(rnd()-.5)*noise+Math.sin(i/1.1)*noise*.25)));
+const RANGE={'28 days':28,'3 months':13,'6 months':26}; let range='28 days';
+const TREND={};
+for(const [k,n] of Object.entries(RANGE)){const m=k==='28 days'?1:7;TREND[k]={cur:series(n,58*m,1.1*m*(28/n),22*m),prev:series(n,52*m,.3*m*(28/n),20*m),unit:k==='28 days'?'Day':'Week'}}
+
+/* ---------- tooltip ---------- */
+const tipEl=$('#tip');
+function tip(html,x,y){tipEl.innerHTML=html;tipEl.hidden=false;const r=tipEl.getBoundingClientRect();
+  tipEl.style.left=Math.max(8,Math.min(innerWidth-r.width-8,x+12))+'px';tipEl.style.top=Math.max(8,y-r.height-10)+'px'}
+const untip=()=>{tipEl.hidden=true};
+document.addEventListener('pointermove',e=>{const t=e.target.closest?.('[data-tip]');if(t)tip(t.dataset.tip,e.clientX,e.clientY);else if(!e.target.closest?.('.hoverline'))untip()});
+document.addEventListener('focusin',e=>{const t=e.target.closest?.('[data-tip]');if(t){const r=t.getBoundingClientRect();tip(t.dataset.tip,r.left+r.width/2,r.top)}});
+document.addEventListener('focusout',untip);
+
+/* ---------- charts ---------- */
+const mounted=[];
+function mount(id,fn){const el=document.getElementById(id);if(!el)return;el.classList.add('first');fn(el,el.clientWidth||600);mounted.push([el,fn])}
+let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>mounted.forEach(([el,fn])=>{if(el.isConnected){el.classList.remove('first');fn(el,el.clientWidth||600)}}),150)});
+const nice=v=>{const p=Math.pow(10,Math.floor(Math.log10(v)));const f=v/p;return (f<=1?1:f<=2?2:f<=5?5:10)*p};
+const rr=(x,y,w,h,r,side)=>{r=Math.min(r,Math.abs(w),h/2);
+  if(side==='r')return `M${x},${y}h${w-r}a${r},${r} 0 0 1 ${r},${r}v${h-2*r}a${r},${r} 0 0 1 ${-r},${r}h${-(w-r)}z`;
+  if(side==='l')return `M${x+w},${y}h${-(w-r)}a${r},${r} 0 0 0 ${-r},${r}v${h-2*r}a${r},${r} 0 0 0 ${r},${r}h${w-r}z`;
+  return `M${x},${y+h}v${-(h-r)}a${r},${r} 0 0 1 ${r},${-r}h${w-2*r}a${r},${r} 0 0 1 ${r},${r}v${h-r}z`};
+
+function lineChart(el,w,d){
+  const h=230,wide=w>460,m={l:38,r:wide?92:10,t:10,b:24},n=d.cur.length,max=nice(Math.max(...d.cur,...d.prev)*1.05);
+  const X=i=>m.l+i*(w-m.l-m.r)/(n-1),Y=v=>m.t+(h-m.t-m.b)*(1-v/max);
+  const path=a=>a.map((v,i)=>(i?'L':'M')+X(i).toFixed(1)+','+Y(v).toFixed(1)).join('');
+  let g='';for(let t=0;t<=4;t++){const v=max*t/4;g+=`<line x1="${m.l}" x2="${w-m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="${t?'var(--line)':'var(--axis)'}"/><text x="${m.l-6}" y="${Y(v)+4}" text-anchor="end">${fmt(v)}</text>`}
+  const step=Math.ceil(n/(wide?7:4));for(let i=0;i<n;i+=step)g+=`<text x="${X(i)}" y="${h-6}" text-anchor="middle">${d.unit} ${i+1}</text>`;
+  const area=path(d.cur)+`L${X(n-1)},${Y(0)}L${X(0)},${Y(0)}z`;
+  el.innerHTML=`<svg viewBox="0 0 ${w} ${h}" role="img" tabindex="0" aria-label="Organic clicks, this period against the previous period. Use arrow keys to read values.">${g}
+   <path class="fade" d="${area}" fill="var(--s1)" fill-opacity=".08"/>
+   <path class="fade" d="${path(d.prev)}" fill="none" stroke="var(--prev)" stroke-width="1.5" stroke-dasharray="4 4"/>
+   <path class="draw" pathLength="1" d="${path(d.cur)}" fill="none" stroke="var(--s1)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+   <circle class="fade" cx="${X(n-1)}" cy="${Y(d.cur[n-1])}" r="4" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/>
+   ${wide?`<text class="val fade" x="${X(n-1)+9}" y="${Y(d.cur[n-1])+4}">This period</text><text class="fade" x="${X(n-1)+9}" y="${Y(d.prev[n-1])+(Math.abs(Y(d.prev[n-1])-Y(d.cur[n-1]))<14?18:4)}">Previous</text>`:''}
+   <g class="hoverline" visibility="hidden"><line y1="${m.t}" y2="${h-m.b}" stroke="var(--axis)"/><circle r="4" fill="var(--prev)" stroke="var(--surface)" stroke-width="2"/><circle r="4.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/></g>
+   <rect class="hoverline" x="${m.l}" y="${m.t}" width="${w-m.l-m.r}" height="${h-m.t-m.b}" fill="transparent"/></svg>`;
+  const svg=$('svg',el),hl=$('g.hoverline',svg),[ln,c1,c2]=hl.children;let idx=n-1;
+  const show=i=>{idx=Math.max(0,Math.min(n-1,i));hl.setAttribute('visibility','visible');ln.setAttribute('x1',X(idx));ln.setAttribute('x2',X(idx));
+    c1.setAttribute('cx',X(idx));c1.setAttribute('cy',Y(d.prev[idx]));c2.setAttribute('cx',X(idx));c2.setAttribute('cy',Y(d.cur[idx]));
+    const r=svg.getBoundingClientRect(),k=r.width/w;tip(`<b>${d.unit} ${idx+1}</b><br>This period: <b>${fmt(d.cur[idx])}</b> clicks<br>Previous: ${fmt(d.prev[idx])}`,r.left+X(idx)*k,r.top+Y(d.cur[idx])*k)};
+  const hide=()=>{hl.setAttribute('visibility','hidden');untip()};
+  svg.addEventListener('pointermove',e=>{const r=svg.getBoundingClientRect();show(Math.round(((e.clientX-r.left)/r.width*w-m.l)/((w-m.l-m.r)/(n-1))))});
+  svg.addEventListener('pointerleave',hide);svg.addEventListener('blur',hide);
+  svg.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'){show(idx-1);e.preventDefault()}if(e.key==='ArrowRight'){show(idx+1);e.preventDefault()}});
+}
+function hbar(el,w,rows,o={}){
+  const lw=Math.min(190,w*.42),rh=28,h=rows.length*rh+4,max=o.max||Math.max(...rows.map(r=>r.v)),bw=w-lw-58;
+  el.innerHTML=`<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="${esc(o.label||'Bar chart')}"><line x1="${lw}" x2="${lw}" y1="0" y2="${h}" stroke="var(--axis)"/>`+rows.map((r,i)=>{
+    const y=i*rh+6,bl=Math.max(2,bw*r.v/max);
+    return `<g tabindex="0" data-tip="<b>${esc(r.k)}</b><br>${fmt(r.v)} ${esc(o.unit||'')}"><rect x="0" y="${i*rh}" width="${w}" height="${rh}" fill="transparent"/>
+     <text class="cat" x="${lw-8}" y="${y+12}" text-anchor="end">${esc(r.k.length>lw/6.2?r.k.slice(0,Math.floor(lw/6.2)-1)+'…':r.k)}</text>
+     <path class="gx" style="--i:${i}" d="${rr(lw,y,bl,16,4,'r')}" fill="${r.c||'var(--s1)'}"/>
+     <text class="val fade" x="${lw+bl+6}" y="${y+12}">${fmt(r.v)}</text></g>`}).join('')+`</svg>`;
+}
+function vbar(el,w,rows,o={}){
+  const h=220,m={l:36,r:8,t:18,b:26},max=nice(Math.max(...rows.map(r=>r.v))*1.05),bw=(w-m.l-m.r)/rows.length,Y=v=>m.t+(h-m.t-m.b)*(1-v/max);
+  let g='';for(let t=0;t<=4;t++){const v=max*t/4;g+=`<line x1="${m.l}" x2="${w-m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="${t?'var(--line)':'var(--axis)'}"/><text x="${m.l-6}" y="${Y(v)+4}" text-anchor="end">${fmt(v)}</text>`}
+  el.innerHTML=`<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="${esc(o.label||'')}">${g}`+rows.map((r,i)=>{
+    const x=m.l+i*bw+2,ww=bw-4,bh=Math.max(2,Y(0)-Y(r.v));
+    return `<g tabindex="0" data-tip="<b>Position ${esc(r.k)}</b><br>${fmt(r.v)} queries"><rect x="${x}" y="${m.t}" width="${ww}" height="${h-m.t-m.b}" fill="transparent"/>
+     <path class="gy" style="--i:${i}" d="${rr(x,Y(r.v),ww,bh,4,'t')}" fill="${r.c||'var(--s1)'}"/>
+     <text class="val fade" x="${x+ww/2}" y="${Y(r.v)-5}" text-anchor="middle">${fmt(r.v)}</text>
+     <text class="cat" x="${x+ww/2}" y="${h-8}" text-anchor="middle">${esc(r.k)}</text></g>`}).join('')+`</svg>`;
+}
+function diverge(el,w,rows){
+  const lw=Math.min(180,w*.4),rh=28,h=rows.length*rh+22,max=Math.max(...rows.map(r=>Math.abs(r.v))),half=(w-lw-10)/2-34,cx=lw+10+half+34;
+  el.innerHTML=`<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Change in clicks by page">
+   <text x="${cx-6}" y="${h-4}" text-anchor="end">Lost clicks</text><text x="${cx+6}" y="${h-4}">Gained clicks</text>`+rows.map((r,i)=>{
+    const y=i*rh+6,bl=Math.max(2,half*Math.abs(r.v)/max),pos=r.v>=0;
+    return `<g tabindex="0" data-tip="<b class='mono'>${esc(r.k)}</b><br>${pos?'+':'−'}${fmt(Math.abs(r.v))} clicks vs previous period"><rect x="0" y="${i*rh}" width="${w}" height="${rh}" fill="transparent"/>
+     <text class="cat" x="${lw}" y="${y+12}" text-anchor="end" style="font-family:var(--mono);font-size:10.5px">${esc(r.k.length>lw/6.6?r.k.slice(0,Math.floor(lw/6.6)-1)+'…':r.k)}</text>
+     <path class="${pos?'gx':'gxr'}" style="--i:${i}" d="${pos?rr(cx+1,y,bl,16,4,'r'):rr(cx-1-bl,y,bl,16,4,'l')}" fill="${pos?'var(--s1)':'var(--neg)'}"/>
+     <text class="val fade" x="${pos?cx+bl+6:cx-bl-6}" y="${y+12}" text-anchor="${pos?'start':'end'}">${pos?'+':'−'}${fmt(Math.abs(r.v))}</text></g>`}).join('')+
+   `<line x1="${cx}" x2="${cx}" y1="0" y2="${h-18}" stroke="var(--axis)"/></svg>`;
+}
+function scatter(el,w,pts){
+  const h=280,m={l:44,r:14,t:12,b:38},X=v=>m.l+(v-.5)/5*(w-m.l-m.r),Y=v=>m.t+(h-m.t-m.b)*(1-(v-.5)/5);
+  let g='';for(let t=1;t<=5;t++)g+=`<line x1="${m.l}" x2="${w-m.r}" y1="${Y(t)}" y2="${Y(t)}" stroke="var(--line)"/><text x="${m.l-8}" y="${Y(t)+4}" text-anchor="end">${t}</text><text x="${X(t)}" y="${h-m.b+16}" text-anchor="middle">${t}</text>`;
+  const seen={};
+  el.innerHTML=`<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Findings by impact and effort">${g}
+   <line x1="${m.l}" x2="${w-m.r}" y1="${h-m.b}" y2="${h-m.b}" stroke="var(--axis)"/><line x1="${m.l}" x2="${m.l}" y1="${m.t}" y2="${h-m.b}" stroke="var(--axis)"/>
+   <text x="${(m.l+w-m.r)/2}" y="${h-4}" text-anchor="middle">Effort (1 low to 5 high)</text>
+   <text transform="translate(11 ${(m.t+h-m.b)/2}) rotate(-90)" text-anchor="middle">Impact</text>
+   <text class="cat fade" x="${X(.62)}" y="${Y(5.32)}">Quick wins</text>`+pts.map((p,i)=>{
+     const k=p.effort+'-'+p.impact,j=seen[k]=(seen[k]||0)+1,dx=(j-1)*17;
+     return `<circle class="popin" style="--i:${i}" tabindex="0" cx="${X(p.effort)+dx}" cy="${Y(p.impact)}" r="7" fill="var(${BK[p.bucket][1]})" stroke="var(--surface)" stroke-width="2"
+       data-tip="<b>${esc(p.title)}</b><br>${BK[p.bucket][0]} · impact ${p.impact}, effort ${p.effort}<br><span class='muted'>${esc(agent(p.agent).role)}</span>"/>`}).join('')+`</svg>`;
+}
+function spark(a,c='var(--s1)'){const w=92,h=30,mx=Math.max(...a),mn=Math.min(...a),X=i=>2+i*(w-8)/(a.length-1),Y=v=>h-4-(h-9)*(v-mn)/((mx-mn)||1);
+  const p=a.map((v,i)=>(i?'L':'M')+X(i).toFixed(1)+','+Y(v).toFixed(1)).join('');
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true" class="first"><path d="${p}L${X(a.length-1)},${h}L2,${h}z" fill="${c}" opacity=".1"/><path class="draw" pathLength="1" d="${p}" fill="none" stroke="${c}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${X(a.length-1)}" cy="${Y(a[a.length-1])}" r="2.6" fill="${c}"/></svg>`}
+
+/* ---------- shared bits ---------- */
+const tblHtml=(cols,rows)=>`<div class="tblwrap"><table><thead><tr>${cols.map((c,i)=>`<th class="${i?'r':''}">${esc(c)}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((c,i)=>`<td class="${i?'r':''}">${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+const chartCard=(id,title,sub,legend,table,i=0)=>`<section class="card" style="--i:${i}"><div class="chead"><div><h2>${title}</h2><p>${sub}</p></div><button class="btn sm" aria-pressed="false" data-tbl="${id}">Table</button></div>${legend?`<div class="legend">${legend}</div>`:''}<div class="chart" id="${id}"></div><div id="${id}-t" hidden>${table}</div></section>`;
+const statusChip=a=>({idle:`<span class="tag"><span class="dot"></span>Idle</span>`,run:`<span class="tag"><span class="dot run"></span>Running</span>`,review:`<span class="tag"><span class="dot good"></span>Needs review</span>`,input:`<span class="tag"><span class="dot warn"></span>Needs input</span>`}[a.status]);
+const evTag=e=>`<span class="tag"><span class="dot ${EV[e][1]}"></span>${EV[e][0]}</span>`;
+function toast(t){$$('.toast').forEach(e=>e.remove());const d=document.createElement('div');d.className='toast';d.setAttribute('role','status');d.textContent=t;document.body.append(d);setTimeout(()=>d.remove(),2300)}
+function countUp(root){$$('[data-n]',root).forEach(el=>{const to=+el.dataset.n,dec=+(el.dataset.d||0),suf=el.dataset.s||'';const put=v=>el.textContent=(dec?v.toFixed(dec):fmt(v))+suf;
+  if(reduce){put(to);return}const t0=performance.now();(function f(t){const k=Math.min(1,(t-t0)/700),e=1-Math.pow(1-k,3);put(to*e);if(k<1)requestAnimationFrame(f)})(t0)})}
+const openCount=()=>F.filter(f=>f.status==='open').length;
+
+/* ---------- views ---------- */
+const V={};
+V.overview=()=>{
+  const d=TREND[range],sum=a=>a.reduce((x,y)=>x+y,0),c=sum(d.cur),p=sum(d.prev),pct=(c-p)/p*100;
+  const tiles=[['Organic clicks',c,0,'',pct,d.cur],['Impressions',c*31,0,'',6.4,series(14,60,1.2,14)],['Average position',18.6,1,'',-1.3,series(14,24,-.4,3),true],['Indexed pages',112,0,'',3,series(14,100,.9,3)],['Quote requests',23,0,'',15,series(14,3,.25,3)]];
+  const review=F.filter(f=>f.status==='open').slice(0,5);
+  return `<div class="head"><div><h1>Overview</h1><p>Where nbyit.com stands, and what is waiting for your decision.</p></div>
+    <div class="chips" role="group" aria-label="Date range">${Object.keys(RANGE).map(k=>`<button class="btn sm" aria-pressed="${k===range}" data-range="${k}">${k}</button>`).join('')}</div></div>
+  <div class="grid g5 stag">${tiles.map((t,i)=>`<div class="card tile" style="--i:${i}"><span class="lbl">${t[0]}</span><div class="row"><span class="v" data-n="${t[1]}" data-d="${t[2]}">${t[2]?t[1]:fmt(t[1])}</span>${spark(t[5])}</div>
+    <span class="delta ${t[6]?'up':(t[4]>=0?'up':'down')}">${t[6]?'▲ improved '+Math.abs(t[4])+' places':(t[4]>=0?'▲ ':'▼ ')+Math.abs(t[4]).toFixed(1)+'%'} <span class="muted" style="font-weight:400">vs previous</span></span></div>`).join('')}</div>
+  <div class="grid g2 stag">
+   ${chartCard('c-trend','Organic clicks','Search Console · '+range+' against the period before','<span><i class="ln" style="background:var(--s1)"></i>This period</span><span><i class="ln" style="background:var(--prev)"></i>Previous period</span>',tblHtml([d.unit,'This period','Previous'],d.cur.map((v,i)=>[d.unit+' '+(i+1),fmt(v),fmt(d.prev[i])])),5)}
+   <section class="card" style="--i:6"><div class="chead"><div><h2>Waiting for your review</h2><p>${openCount()} findings from ${new Set(F.filter(f=>f.status==='open').map(f=>f.agent)).size} agents</p></div><a class="btn sm" href="#review">Open queue</a></div>
+     ${review.map(f=>`<div style="display:flex;gap:10px;justify-content:space-between;align-items:flex-start;border-top:1px solid var(--line);padding-top:9px"><div style="min-width:0"><div style="font-weight:500">${esc(f.title)}</div><div class="muted" style="font-size:12px">${agent(f.agent).role} · impact ${f.impact}, effort ${f.effort}</div></div>${evTag(f.ev)}</div>`).join('')}</section>
+  </div>
+  <section class="card"><div class="chead"><div><h2>Content pipeline</h2><p>Topic: 3D furniture modeling · stage ${pipeAt+1} of 7</p></div><a class="btn sm" href="#pipeline">Open pipeline</a></div>
+   <div class="bar"><i style="width:${pipeAt/7*100}%"></i></div>
+   <div class="chips">${PIPE.map((id,i)=>`<span class="tag"><span class="dot ${i<pipeAt?'good':i===pipeAt?'warn':''}"></span>${pad(id)} ${agent(id).name}</span>`).join('')}</div></section>`;
+};
+V.overview.after=()=>mount('c-trend',(el,w)=>lineChart(el,w,TREND[range]));
+
+let agFilter='all';
+V.agents=()=>`<div class="head"><div><h1>Agents</h1><p>Nineteen agents, one job each. Open one to give it inputs and run it in its own conversation.</p></div>
+  <div class="chips" role="group" aria-label="Filter by group">${[['all','All 19'],...Object.entries(GROUPS)].map(([k,l])=>`<button class="btn sm" aria-pressed="${k===agFilter}" data-agf="${k}">${l}</button>`).join('')}</div></div>
+  <div class="grid g4 stag">${AG.filter(a=>agFilter==='all'||a.group===agFilter).map((a,i)=>`<button class="card agent" style="--i:${i}" data-run="${a.id}">
+    <div class="chead"><div><span class="n">${pad(a.id)} · ${GROUPS[a.group]}</span><h3>${a.name}</h3></div>${statusChip(a)}</div>
+    <div class="job">${a.job}</div>
+    <div class="foot"><span class="chips">${a.src.length?a.src.map(s=>`<span class="src">${SRC[s]}</span>`).join(''):'<span class="src">No data source</span>'}</span><span class="muted" style="font-size:12px">${a.last||'Not run yet'}</span></div></button>`).join('')}</div>`;
+
+let runId=1, runTimer=null;
+V.run=()=>{const a=agent(runId),fs=F.filter(f=>f.agent===a.id),next=agent(a.id<19?a.id+1:19),miss=a.src.filter(s=>!CONN.find(c=>c.k===s).on);
+  return `<div class="head"><div><span class="mono muted">/seo ${a.name.toLowerCase()} · agent ${pad(a.id)}</span><h1>${a.role}</h1><p>${a.job}. One job only; it hands its output to the next agent.</p></div>
+    <div class="chips"><a class="btn" href="#agents">All agents</a><button class="btn pri" id="runbtn">Run agent</button></div></div>
+  <div class="grid g2">
+   <section class="card"><h2>Inputs</h2>${a.inputs.map((f,i)=>`<div class="field"><label class="lbl" for="in-${a.id}-${i}">${f}</label><input id="in-${a.id}-${i}" value="${esc(PREFILL[f]||'')}" placeholder="${PREFILL[f]?'':'Add '+f.toLowerCase()}"></div>`).join('')}
+     <div><span class="lbl">Data it can read</span><div class="chips" style="margin-top:6px">${a.src.length?a.src.map(s=>{const on=CONN.find(c=>c.k===s).on;return `<span class="tag"><span class="dot ${on?'good':'crit'}"></span>${SRC[s]}${on?'':' · not connected'}</span>`}).join(''):'<span class="tag">Works from the inputs and the page itself</span>'}</div></div>
+     ${miss.length?`<p class="ink2" style="font-size:13px">Without ${miss.map(s=>SRC[s]).join(' and ')}, this agent uses only what you paste in and lists the rest under “Inputs needed”. <a href="#connections" style="color:var(--accent)">Connect a source</a></p>`:''}</section>
+   <section class="card"><div class="chead"><div><h2>Run</h2><p id="runmeta">${fs.length?'Last run '+(a.last||'earlier')+' · '+fs.length+' findings':'Not run yet'}</p></div><span id="runstat">${statusChip(a)}</span></div>
+     <div class="bar" id="runbar"><i style="width:${fs.length?100:0}%"></i></div>
+     <div class="stream" id="stream" aria-live="polite">${fs.length?outLines(a,fs).map(l=>lineHtml(l)).join(''):'<span class="muted">Run the agent to see its progress and structured output here.</span>'}</div>
+     <div class="chips" id="runfoot" ${fs.length?'':'hidden'}><a class="btn sm" href="#review">Review ${fs.length} finding${fs.length===1?'':'s'}</a>${a.id<19?`<button class="btn sm" data-run="${next.id}">Send to ${next.role}</button>`:''}</div></section>
+  </div>`};
+const outLines=(a,fs)=>[['h','Summary'],['t',fs.length+' finding'+(fs.length===1?'':'s')+' for nbyit.com. '+fs.filter(f=>f.ev==='verified').length+' verified, '+fs.filter(f=>f.ev!=='verified').length+' to confirm.'],['h','Findings'],...fs.map(f=>['f',f]),['h','Inputs needed'],['t',a.src.some(s=>!CONN.find(c=>c.k===s).on)?'Connect '+a.src.filter(s=>!CONN.find(c=>c.k===s).on).map(s=>SRC[s]).join(', ')+' for measured data.':'None.']];
+const lineHtml=l=>l[0]==='h'?`<div class="ln h">${l[1]}</div>`:l[0]==='f'?`<div class="ln" style="display:flex;gap:8px;justify-content:space-between;align-items:flex-start;font-family:var(--body);font-size:13px"><span>${esc(l[1].title)}</span>${evTag(l[1].ev)}</div>`:`<div class="ln ${l[2]||''}">${esc(l[1])}</div>`;
+function startRun(){const a=agent(runId),st=$('#stream'),bar=$('#runbar');if(!st)return;clearInterval(runTimer);
+  let fs=F.filter(f=>f.agent===a.id);
+  if(!fs.length){F.push({id:F.length+1,agent:a.id,title:'Example finding from the '+a.role,detail:'Placeholder result for this design.',ev:'check',impact:3,effort:2,bucket:'later',status:'open'});fs=F.filter(f=>f.agent===a.id)}
+  const steps=[['t','Reading inputs…'],...a.src.filter(s=>CONN.find(c=>c.k===s).on).map(s=>['t','Reading '+SRC[s]+' (3 lookups)…']),['t','Fetching nbyit.com pages…'],['t','Writing structured output…'],...outLines(a,fs)];
+  a.status='run';$('#runstat').innerHTML=statusChip(a);$('#runfoot').hidden=true;st.innerHTML='';bar.classList.add('live');bar.firstElementChild.style.width='6%';$('#runbtn').disabled=true;$('#runmeta').textContent='Running now';
+  let i=0;const tick=()=>{if(!st.isConnected){clearInterval(runTimer);a.status='review';return}
+    $$('.caret',st).forEach(e=>e.classList.remove('caret'));
+    if(i>=steps.length){clearInterval(runTimer);a.status='review';a.last='Just now';bar.classList.remove('live');$('#runstat').innerHTML=statusChip(a);$('#runbtn').disabled=false;
+      $('#runmeta').textContent='Finished just now · '+fs.length+' findings';$('#runfoot').hidden=false;renderNav();toast(a.role+' finished. Ready for review.');return}
+    const l=steps[i].slice();if(l[0]==='t')l[2]='caret';st.insertAdjacentHTML('beforeend',lineHtml(l));bar.firstElementChild.style.width=((i+1)/steps.length*100)+'%';i++};
+  tick();runTimer=setInterval(tick,reduce?60:420)}
+
+V.pipeline=()=>`<div class="head"><div><h1>Pipeline</h1><p>Agents 01 to 07 in order for one topic. Each stage pauses for your approval before it hands on.</p></div>
+   <div class="chips"><span class="pill mono">3D furniture modeling</span><button class="btn pri" id="pipebtn" ${pipeAt>=7?'disabled':''}>${pipeAt>=7?'Pipeline complete':'Approve and run next stage'}</button></div></div>
+  <div class="bar" id="pipebar"><i style="width:${pipeAt/7*100}%"></i></div>
+  <div class="pipe stag">${PIPE.map((id,i)=>{const a=agent(id),st=i<pipeAt?['good','Approved']:i===pipeAt?['warn','Waiting for you']:['','Queued'];
+    return `<div class="stage ${i===pipeAt?'active':''}" style="--i:${i}" data-stage="${i}"><div class="box"><span class="mono muted">${pad(id)}</span><h3>${a.name}</h3><span class="tag" style="align-self:flex-start"><span class="dot ${st[0]}"></span>${st[1]}</span><span class="muted" style="font-size:12px">${['Objective and bets','14 query groups','Intent and gaps','Outline and evidence list','Draft, 3 facts to source','Title and heading fixes','Links to add'][i]}</span></div></div>`}).join('')}</div>
+  <section class="card"><h2>What each stage hands on</h2>${tblHtml(['From','To','Payload'],[['Strategist','Keyword Researcher','Lead vertical, audience, goal'],['Keyword Researcher','SERP Analyst','Primary query per group'],['SERP Analyst','Brief Writer','Intent, table stakes, gaps'],['Brief Writer','SEO Writer','Outline, evidence checklist'],['SEO Writer','On-Page Reviewer','Draft with title and headings'],['On-Page Reviewer','Internal Linker','Final page and target query']])}</section>`;
+function runPipe(){if(pipeBusy||pipeAt>=7)return;pipeBusy=true;const st=$(`[data-stage="${pipeAt}"]`),b=$('#pipebtn');b.disabled=true;b.textContent='Running '+agent(PIPE[pipeAt]).name+'…';
+  st.classList.add('flow');$('.dot',st).className='dot run';$('.tag',st).lastChild.textContent='Running';$('#pipebar').classList.add('live');
+  setTimeout(()=>{pipeAt++;pipeBusy=false;if(location.hash==='#pipeline')render();toast(pipeAt>=7?'Pipeline complete.':'Stage approved. '+agent(PIPE[pipeAt]).name+' is waiting for you.')},reduce?200:1600)}
+
+let fFilter='open';
+V.review=()=>{const rows=F.filter(f=>fFilter==='all'||f.status===fFilter);
+  return `<div class="head"><div><h1>Review</h1><p>Every recommendation from every agent. Nothing reaches the plan until you approve it.</p></div>
+   <div class="chips" role="group" aria-label="Filter by status">${[['open','Open'],['approved','Approved'],['dismissed','Dismissed'],['all','All']].map(([k,l])=>`<button class="btn sm" aria-pressed="${k===fFilter}" data-ff="${k}">${l} <span class="num muted">${k==='all'?F.length:F.filter(f=>f.status===k).length}</span></button>`).join('')}</div></div>
+  <div class="grid g2">
+   ${chartCard('c-scatter','Impact against effort','Each dot is a finding. Top left is the quick-win corner.',Object.values(BK).map(b=>`<span><i style="background:var(${b[1]});border-radius:50%"></i>${b[0]}</span>`).join(''),tblHtml(['Finding','Impact','Effort','Plan'],F.map(f=>[f.title,f.impact,f.effort,BK[f.bucket][0]])))}
+   <section class="card"><h2>Evidence behind the findings</h2><p class="muted" style="font-size:12px">Assumptions and unchecked items need your confirmation before work starts.</p><div class="chart" id="c-ev"></div></section>
+  </div>
+  <section class="card"><div class="tblwrap"><table><thead><tr><th>Finding</th><th>Agent</th><th>Evidence</th><th class="r">Impact</th><th class="r">Effort</th><th>Decision</th></tr></thead><tbody id="frows">
+   ${rows.length?rows.map(f=>`<tr data-f="${f.id}"><td style="min-width:220px"><div style="font-weight:500">${esc(f.title)}</div><div class="muted" style="font-size:12px">${esc(f.detail)}</div></td><td style="white-space:nowrap">${agent(f.agent).role}</td><td>${evTag(f.ev)}</td><td class="r">${f.impact}</td><td class="r">${f.effort}</td>
+     <td style="white-space:nowrap">${f.status==='open'?`<button class="btn sm pri" data-dec="approved">Approve</button> <button class="btn sm" data-dec="dismissed">Dismiss</button>`:`<span class="tag"><span class="dot ${f.status==='approved'?'good':''}"></span>${f.status==='approved'?'Approved':'Dismissed'}</span> <button class="btn sm" data-dec="open">Undo</button>`}</td></tr>`).join(''):`<tr><td colspan="6" class="muted">Nothing here. Run an agent to add findings.</td></tr>`}</tbody></table></div></section>`};
+V.review.after=()=>{mount('c-scatter',(el,w)=>scatter(el,w,F.filter(f=>f.status!=='dismissed')));
+  mount('c-ev',(el,w)=>hbar(el,w,Object.keys(EV).map(k=>({k:EV[k][0],v:F.filter(f=>f.ev===k).length})),{unit:'findings',label:'Findings by evidence type'}))};
+
+V.plan=()=>{const ord=Object.keys(BK);
+  return `<div class="head"><div><h1>Plan</h1><p>Approved findings, ordered by the SEO Planner. Move an item if your capacity says otherwise.</p></div><span class="pill">${F.filter(f=>f.status==='approved').length} approved · ${openCount()} still in review</span></div>
+  <div class="cols">${ord.map((b,bi)=>{const items=F.filter(f=>f.bucket===b&&f.status!=='dismissed');
+    return `<div class="col"><div class="chead"><h2><span class="dot" style="display:inline-block;background:var(${BK[b][1]});margin-right:7px"></span>${BK[b][0]}</h2><span class="mono muted">${items.length}</span></div>
+     ${items.map(f=>`<div class="item" data-f="${f.id}"><div style="font-weight:500">${esc(f.title)}</div><div class="chips"><span class="tag">${agent(f.agent).role}</span>${f.status==='open'?'<span class="tag"><span class="dot warn"></span>In review</span>':''}<span class="tag">Effort ${f.effort}</span></div>
+       <div class="chips">${bi>0?`<button class="btn sm" data-mv="${ord[bi-1]}" aria-label="Move to ${BK[ord[bi-1]][0]}">← ${BK[ord[bi-1]][0]}</button>`:''}${bi<2?`<button class="btn sm" data-mv="${ord[bi+1]}" aria-label="Move to ${BK[ord[bi+1]][0]}">${BK[ord[bi+1]][0]} →</button>`:''}</div></div>`).join('')||'<span class="muted">Nothing here yet.</span>'}</div>`}).join('')}</div>`};
+
+const REP={
+  pos:[['1–3',9],['4–10',34],['11–20',71],['21–50',118],['51+',64]].map(([k,v],i)=>({k,v})),
+  idx:[['Indexed',112,'var(--s1)'],['Crawled, not indexed',38],['Duplicate without canonical',17],['Page with redirect',12],['Excluded by noindex',9],['Not found (404)',6]].map(([k,v,c])=>({k,v,c:c||'var(--prev)'})),
+  wl:[['/industries/3d-furniture/',212],['/3d-rendering-services/',96],['/portfolio/',41],['/blogs/blender-shortcuts/',-38],['/3d-modeling-services-company/',-87],['/clipping-path-services/',-124]].map(([k,v])=>({k,v})),
+  rd:[['nbyit.com (you)',186,'var(--s1)'],['cgifurniture.com',940,'var(--s2)'],['suntecindia.com',2310,'var(--s2)'],['outsource2india.com',3180,'var(--s2)']].map(([k,v,c])=>({k,v,c})),
+  ai:{eng:['ChatGPT','Perplexity','AI Overviews','Gemini'],q:[['Best 3D furniture modeling company',[20,40,0,20]],['Who to outsource product rendering to',[40,60,20,20]],['3D modeling studio in Bangladesh',[80,100,60,80]],['Cost of 3D furniture models',[0,20,0,0]],['CGI vs photography for furniture',[0,0,0,20]]]}
+};
+V.reports=()=>{const {ai}=REP,step=v=>v>=80?5:v>=60?4:v>=40?3:v>=20?2:1;
+  return `<div class="head"><div><h1>Reports</h1><p>Search Console and audit data for nbyit.com, with the SEO Reporter’s summary.</p></div><button class="btn" id="share">Copy share link</button></div>
+  <section class="card"><span class="lbl">Summary · written by the SEO Reporter</span><p style="max-width:70ch">Clicks rose against the previous period, led by the furniture industry page. Two overlapping service pages lost ground, which supports merging them. Quote-request tracking is too new to compare yet.</p></section>
+  <div class="grid g2 stag">
+   ${chartCard('c-pos','Queries by ranking position','Most queries sit on page two; positions 11 to 20 are the nearest wins.','',tblHtml(['Position','Queries'],REP.pos.map(r=>[r.k,r.v])),0)}
+   ${chartCard('c-idx','Pages by indexing status','Search Console page indexing report','<span><i style="background:var(--s1)"></i>Indexed</span><span><i style="background:var(--prev)"></i>Not indexed, by reason</span>',tblHtml(['Status','Pages'],REP.idx.map(r=>[r.k,r.v])),1)}
+   ${chartCard('c-wl','Page winners and losers','Change in clicks against the previous period','<span><i style="background:var(--s1)"></i>Gained</span><span><i style="background:var(--neg)"></i>Lost</span>',tblHtml(['Page','Change in clicks'],REP.wl.map(r=>[r.k,(r.v>0?'+':'')+r.v])),2)}
+   ${chartCard('c-rd','Referring domains','Your site against three competitors','<span><i style="background:var(--s1)"></i>You</span><span><i style="background:var(--s2)"></i>Competitor</span>',tblHtml(['Site','Referring domains'],REP.rd.map(r=>[r.k,fmt(r.v)])),3)}
+  </div>
+  <section class="card"><div class="chead"><div><h2>AI answer visibility</h2><p>Share of 5 test runs in which the brand was named, by question and engine</p></div>
+    <div class="legend" aria-label="Scale"><span>0%</span>${[1,2,3,4,5].map(i=>`<i style="background:var(--q${i});margin:0;width:18px"></i>`).join('')}<span>100%</span></div></div>
+   <div class="tblwrap"><div class="heat" role="table" style="grid-template-columns:minmax(170px,1.6fr) repeat(${ai.eng.length},minmax(64px,1fr))"><span></span>${ai.eng.map(e=>`<span class="h">${e}</span>`).join('')}
+    ${ai.q.map((r,ri)=>`<span class="q">${r[0]}</span>`+r[1].map((v,ci)=>{const s=step(v);return `<span class="cell" tabindex="0" style="--i:${ri*4+ci};background:var(--q${s});color:var(${s>=4?'--q-hi-ink':'--q-lo-ink'})" data-tip="<b>${ai.eng[ci]}</b><br>${esc(r[0])}<br>Named in ${v/20} of 5 runs">${v}%</span>`}).join('')).join('')}</div></div></section>`};
+V.reports.after=()=>{mount('c-pos',(el,w)=>vbar(el,w,REP.pos,{label:'Queries by ranking position'}));mount('c-idx',(el,w)=>hbar(el,w,REP.idx,{unit:'pages',label:'Pages by indexing status'}));
+  mount('c-wl',(el,w)=>diverge(el,w,REP.wl));mount('c-rd',(el,w)=>hbar(el,w,REP.rd,{unit:'referring domains',label:'Referring domains by site'}))};
+
+V.connections=()=>`<div class="head"><div><h1>Connections</h1><p>Agents read from these sources and never write to them. Paid lookups stop at the cap you set.</p></div></div>
+  <div class="grid g2 stag">${CONN.map((c,i)=>{const users=AG.filter(a=>a.src.includes(c.k));
+    return `<section class="card" style="--i:${i}"><div class="chead"><div><h2>${c.name}</h2><p>${c.note}</p></div><span class="tag"><span class="dot ${c.on?'good':''}"></span>${c.on?'Connected':'Not connected'}</span></div>
+     <div><span class="lbl">Used by ${users.length} agent${users.length===1?'':'s'}</span><div class="chips" style="margin-top:6px">${users.map(a=>`<span class="src">${pad(a.id)} ${a.role}</span>`).join('')}</div></div>
+     ${c.cap?`<div class="meter"><div style="display:flex;justify-content:space-between;font-size:12px"><span class="ink2">Credits this month</span><span class="num">${c.on?fmt(c.used):0} of ${fmt(c.cap)}</span></div><div class="bar"><i style="width:${c.on?c.used/c.cap*100:0}%"></i></div></div>`:''}
+     <div><button class="btn ${c.on?'':'pri'}" data-conn="${c.k}">${c.on?'Disconnect':'Connect'}</button></div></section>`}).join('')}</div>`;
+
+/* ---------- router + events ---------- */
+const NAV=[['overview','Overview'],['agents','Agents'],['pipeline','Pipeline'],['review','Review'],['plan','Plan'],['reports','Reports'],['connections','Connections']];
+const cur=()=>{const h=location.hash.slice(1);return V[h]?h:'overview'};
+function renderNav(){const c=cur(),ct={agents:19,review:openCount(),plan:F.filter(f=>f.status==='approved').length};
+  $('#nav').innerHTML=NAV.map(([k,l])=>`<a href="#${k}" ${k===c||(c==='run'&&k==='agents')?'aria-current="page"':''}>${l}${ct[k]!=null?`<span class="ct">${ct[k]}</span>`:''}</a>`).join('')}
+function render(){clearInterval(runTimer);mounted.length=0;untip();const c=cur();$('#view').innerHTML=`<div class="view">${V[c]()}</div>`;V[c].after?.();countUp($('#view'));renderNav()}
+addEventListener('hashchange',()=>{render();scrollTo(0,0)});
+function goRun(id){runId=id;if(location.hash==='#run')render();else location.hash='run'}
+
+document.addEventListener('click',e=>{const t=e.target.closest('button,a');if(!t)return;const d=t.dataset;
+  if(d.run)return goRun(+d.run);
+  if(d.range){range=d.range;return render()}
+  if(d.agf){agFilter=d.agf;return render()}
+  if(d.ff){fFilter=d.ff;return render()}
+  if(d.tbl){const on=t.getAttribute('aria-pressed')!=='true';t.setAttribute('aria-pressed',on);t.textContent=on?'Chart':'Table';$('#'+d.tbl).hidden=on;$('#'+d.tbl+'-t').hidden=!on;return}
+  if(d.dec){const row=t.closest('tr'),f=F.find(x=>x.id==row.dataset.f);f.status=d.dec;row.classList.add("out");setTimeout(render,reduce?0:240);return toast(d.dec==='approved'?'Approved. Added to the plan.':d.dec==='dismissed'?'Dismissed.':'Moved back to open.')}
+  if(d.mv){const it=t.closest('.item'),f=F.find(x=>x.id==it.dataset.f);f.bucket=d.mv;it.classList.add('out');setTimeout(render,reduce?0:240);return toast('Moved to '+BK[d.mv][0]+'.')}
+  if(d.conn){const c=CONN.find(x=>x.k===d.conn);c.on=!c.on;render();return toast(c.name+(c.on?' connected (simulated).':' disconnected.'))}
+  if(t.id==='runbtn')return startRun();
+  if(t.id==='pipebtn')return runPipe();
+  if(t.id==='share'){const u='nineteen.app/r/nbyit-sample';(navigator.clipboard?.writeText(u)||Promise.reject()).then(()=>toast('Share link copied.'),()=>toast('Share link: '+u))}
+});
+
+/* command bar */
+const cmd=$('#cmd'),cl=$('#cmdlist');let ci=0;
+const matches=()=>{const q=cmd.value.trim().toLowerCase();return AG.filter(a=>!q||(a.name+' '+a.role+' '+pad(a.id)).toLowerCase().includes(q)).slice(0,8)};
+function drawCmd(){const m=matches();ci=Math.min(ci,Math.max(0,m.length-1));cl.hidden=false;
+  cl.innerHTML=m.length?m.map((a,i)=>`<button class="${i===ci?'on':''}" data-run="${a.id}"><span class="mono muted">${pad(a.id)}</span><span style="font-weight:500">${a.name}</span><span class="muted" style="font-size:12px">${a.job}</span></button>`).join(''):'<div class="muted" style="padding:8px">No agent matches that.</div>'}
+cmd.addEventListener('focus',drawCmd);cmd.addEventListener('input',()=>{ci=0;drawCmd()});
+cmd.addEventListener('keydown',e=>{const m=matches();
+  if(e.key==='ArrowDown'){ci=(ci+1)%m.length;drawCmd();e.preventDefault()}
+  else if(e.key==='ArrowUp'){ci=(ci-1+m.length)%m.length;drawCmd();e.preventDefault()}
+  else if(e.key==='Enter'&&m[ci]){cl.hidden=true;cmd.value='';cmd.blur();goRun(m[ci].id)}
+  else if(e.key==='Escape'){cl.hidden=true;cmd.blur()}});
+document.addEventListener('pointerdown',e=>{if(!e.target.closest('.cmd'))cl.hidden=true;else if(e.target.closest('[data-run]')){cmd.value=''}});
+document.addEventListener('click',e=>{if(e.target.closest('#cmdlist [data-run]'))cl.hidden=true});
+document.addEventListener('keydown',e=>{if(e.key==='/'&&!/INPUT|TEXTAREA/.test(document.activeElement.tagName)){e.preventDefault();cmd.focus()}});
+
+render();
+</script>

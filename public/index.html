@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nineteen SEO Desk</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="side">
+    <div class="brand"><span class="mark">N</span><b>Nineteen</b></div>
+    <nav class="nav" id="nav" aria-label="Views"></nav>
+    <div class="sitebox" id="sitebox"></div>
+  </aside>
+  <main class="main">
+    <div class="top">
+      <div class="cmd">
+        <label for="cmd"><span class="slash">/seo</span><input id="cmd" autocomplete="off" spellcheck="false" placeholder="type an agent, e.g. strategy" aria-label="Run an agent" aria-controls="cmdlist"><kbd>/</kbd></label>
+        <div class="cmdlist" id="cmdlist" hidden></div>
+      </div>
+      <span class="pill"><span class="dot good"></span><span id="agcount">Agents</span> loaded</span>
+      <span class="pill" id="keypill"></span>
+    </div>
+    <div id="view"><p class="muted">Loading…</p></div>
+  </main>
+</div>
+<div id="tip" hidden></div>
+<script src="/util.js"></script>
+<script src="/charts.js"></script>
+<script src="/app.js"></script>
+</body>
+</html>
